@@ -4,19 +4,6 @@ from pathlib import Path
 import subprocess
 
 
-video_ext = ".mkv"
-video_dir = Path("/Users/user/Main/aboba/Videos/Original")
-output_dir = Path("/Users/user/Main/aboba/Videos/Hardsubbed")
-
-sub_stream = 0
-# sub_stream = None
-
-# sub_dir = Path("/Users/user/Main/aboba/Videos/Subs")
-# sub_ext = ".ass"
-sub_dir = None
-sub_ext = None
-
-
 def main(
     video_dir: Path,
     video_ext: str,
@@ -24,6 +11,7 @@ def main(
     sub_stream: int | None = None,
     sub_dir: Path | None = None,
     sub_ext: str | None = None,
+    dry_run: bool = False,
 ) -> None:
     """Hard-sub videos using FFmpeg.
 
@@ -34,6 +22,7 @@ def main(
         sub_stream -- Index of the subtitle stream in the videos to use, sub_dir and sub_ext must not be set (default: {None})
         sub_dir -- Path to the directory containing subtitle files, with the same names as videos, sub_stream must not be set (default: {None})
         sub_ext -- File extension of the subtitle files, sub_stream must not be set (default: {None})
+        dry_run -- don't execute commands, just print them
 
     Raises:
         ValueError: If neither sub_stream nor both sub_dir and sub_ext are provided,
@@ -56,22 +45,37 @@ def main(
             assert sub_ext is not None
             sub_str = f"""subtitles='{sub_dir / video_path.with_suffix(sub_ext).name}'"""
         else:
-            sub_str = f"""\"[0:v:0]subtitles=\'{video_path}\':si={sub_stream}[v]\" -map \"[v]\" -map 0:a:0 -c:a copy"""
+            sub_str = f"""\"[0:v:0]subtitles=\'{video_path}\':si={sub_stream}[v]\" -map \"[v]\" -map 0:a:0"""
 
         output_path = output_dir / video_path.name
+        if output_dir == video_dir:
+            output_path = output_path.with_stem(f"{output_path.stem} (Hardsubbed)")
 
-        subprocess.call(
-            f"""ffmpeg -i '{video_path}' -filter_complex {sub_str} -crf 18 -c:v libx265 '{output_path}'""",
-            shell=True,
-        )
+        cmd = f"""ffmpeg -i '{video_path}' -filter_complex {sub_str} -crf 18 -c:v libx265 -c:a copy '{output_path}'"""
+        if dry_run:
+            print(cmd)
+        else:
+            subprocess.call(
+                cmd,
+                shell=True,
+            )
 
 
 if __name__ == "__main__":
-    main(
-        video_dir=video_dir,
-        video_ext=video_ext,
-        output_dir=output_dir,
-        sub_stream=sub_stream,
-        sub_dir=sub_dir,
-        sub_ext=sub_ext,
+    kwargs = dict(
+        video_dir=Path("/Users/user/Main/aboba/Videos-archive/2d"),
+        output_dir=Path("/Users/user/Main/aboba/Videos-archive/2d"),
+        video_ext=".mkv",
+        dry_run=False,
     )
+    # Use subs embedded in videos
+    main(
+        sub_stream=0,
+        **kwargs,  # type: ignore[arg-type]
+    )
+    # Use subs from directory
+    # main(
+    #     sub_dir=Path("/Users/user/Main/aboba/Videos-archive/2d/Subs"),
+    #     sub_ext=".ass",
+    #     **kwargs,  # type: ignore[arg-type]
+    # )
