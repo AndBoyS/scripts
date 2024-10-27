@@ -12,6 +12,7 @@ def main(
     sub_dir: Path | None = None,
     sub_ext: str | None = None,
     dry_run: bool = False,
+    is_sub_image: bool = False,
 ) -> None:
     """Hard-sub videos using FFmpeg.
 
@@ -45,7 +46,10 @@ def main(
             assert sub_ext is not None
             sub_str = f"""subtitles='{sub_dir / video_path.with_suffix(sub_ext).name}'"""
         else:
-            sub_str = f"""\"[0:v:0]subtitles=\'{video_path}\':si={sub_stream}[v]\" -map \"[v]\" -map 0:a:0"""
+            if is_sub_image:
+                sub_str = """\"[0:v][0:s]overlay[v]\" -map \"[v]\" -map 0:a:"""
+            else:
+                sub_str = f"""\"[0:v:0]subtitles=\'{video_path}\':si={sub_stream}[v]\" -map \"[v]\" -map 0:a:0"""
 
         output_path = output_dir / video_path.name
         if output_dir == video_dir:
@@ -63,8 +67,8 @@ def main(
 
 if __name__ == "__main__":
     kwargs = dict(
-        video_dir=Path("/Users/user/Main/aboba/Videos-archive/2d"),
-        output_dir=Path("/Users/user/Main/aboba/Videos-archive/2d"),
+        video_dir=Path("/Users/user/Main/aboba/To watch (EDIT)"),
+        output_dir=Path("/Users/user/Main/aboba/To watch (EDIT)"),
         video_ext=".mkv",
         dry_run=False,
     )
