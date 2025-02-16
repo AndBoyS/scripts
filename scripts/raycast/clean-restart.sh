@@ -3,14 +3,12 @@
 # Required parameters:
 # @raycast.schemaVersion 1
 # @raycast.title Clean Restart
-# @raycast.mode silent
+# @raycast.mode compact
 
 # Optional parameters:
 # @raycast.icon 🤖
-
-# Documentation:
-# @raycast.author andboyxd
-# @raycast.authorURL https://raycast.com/andboyxd
+# @raycast.argument1 { "type": "text", "placeholder": "password" }
+# @raycast.needsConfirmation true
 
 osascript -e 'quit app "Mail"'
 osascript -e 'quit app "Calendar"'
@@ -24,4 +22,4 @@ osascript -e 'quit app "iTerm"'
 pkill -x Transmission
 
 source ~/.bashrc
-echo "$SECRET" | sudo -S -k shutdown -r now
+echo "$1" | sudo -S -k shutdown -r now
