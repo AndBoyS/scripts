@@ -1,7 +1,8 @@
 """Hard-sub a batch of files using ffmpeg."""
 
-from pathlib import Path
 import subprocess
+from pathlib import Path
+from typing import Any
 
 
 def main(
@@ -40,42 +41,40 @@ def main(
         )
 
     for video_path in video_dir.glob(f"*{video_ext}"):
-        if sub_file_params_set:
-            assert sub_dir is not None
-            assert sub_ext is not None
-            sub_str = f"""subtitles='{sub_dir / video_path.with_suffix(sub_ext).name}'"""
-        else:
-            sub_str = f"""\"[0:v:0]subtitles=\'{video_path}\':si={sub_stream}[v]\" -map \"[v]\" -map 0:a:0"""
-
         output_path = output_dir / video_path.name
         if output_dir == video_dir:
             output_path = output_path.with_stem(f"{output_path.stem} (Hardsubbed)")
 
-        cmd = f"""ffmpeg -i '{video_path}' -filter_complex {sub_str} -crf 18 -c:v libx265 -c:a copy '{output_path}'"""
+        if sub_file_params_set:
+            assert sub_dir is not None
+            assert sub_ext is not None
+            cur_sub_path = sub_dir / video_path.with_suffix(sub_ext).name
+            cmd = f"""ffmpeg -i \"{video_path}\" -filter_complex subtitles='{cur_sub_path}' -crf 18 -c:v libx265 -c:a copy -shortest \"{output_path}\""""
+
+        else:
+            cmd = f"""ffmpeg -i \"{video_path}\" -filter_complex "[0:v][0:s]overlay[v]" -map "[v]" -map 0:a -c:a copy -shortest \"{output_path}\""""
+
         if dry_run:
             print(cmd)
         else:
-            subprocess.call(
-                cmd,
-                shell=True,
-            )
+            subprocess.call(cmd, shell=True, text=True)
 
 
 if __name__ == "__main__":
-    kwargs = dict(
-        video_dir=Path("/Users/user/Main/aboba/Videos-archive/2d"),
-        output_dir=Path("/Users/user/Main/aboba/Videos-archive/2d"),
+    kwargs: dict[str, Any] = dict(
+        video_dir=Path("/Users/user/Main/aboba/Active/temp"),
+        output_dir=Path("/Users/user/Main/aboba/Active/temp/Hardsubbed"),
         video_ext=".mkv",
         dry_run=False,
     )
     # Use subs embedded in videos
     main(
         sub_stream=0,
-        **kwargs,  # type: ignore[arg-type]
+        **kwargs,
     )
     # Use subs from directory
     # main(
-    #     sub_dir=Path("/Users/user/Main/aboba/Videos-archive/2d/Subs"),
+    #     sub_dir=Path("/Users/user/Main/aboba/Archive/untitled folder"),
     #     sub_ext=".ass",
-    #     **kwargs,  # type: ignore[arg-type]
+    #     **kwargs,
     # )
