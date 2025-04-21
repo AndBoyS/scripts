@@ -16,26 +16,20 @@ strict = true
 disallow_untyped_calls = false
 allow_redefinition = true
 
-[tool.pyright]
-reportRedeclaration = false
-
-[tool.poetry]
+[project]
 name = "scripts"
 version = "0.1.0"
-description = ""
-authors = ["AndBoyS <andboyxd@gmail.com>"]
+description = "Add your description here"
 readme = "README.md"
-package-mode = false
+requires-python = ">=3.12"
+dependencies = [
+    "basedpyright>=1.27.1",
+    "mutagen>=1.47.0",
+    "natsort>=8.4.0",
+]
 
-[tool.poetry.dependencies]
-python = "~3.11"
-mutagen = "^1.47.0"
-natsort = "^8.4.0"
-
-[tool.poetry.group.dev.dependencies]
-mypy = "^1.11.1"
-ruff = "^0.5.7"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[dependency-groups]
+dev = [
+    "mypy>=1.15.0",
+    "ruff>=0.11.6",
+]
