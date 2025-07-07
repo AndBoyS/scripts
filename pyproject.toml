@@ -1,20 +1,42 @@
 [tool.ruff]
 line-length = 120
 
-# Add docstyle rules to the default ones
 [tool.ruff.lint]
-select = ["E4", "E7", "E9", "F", "D"]
-
-[tool.ruff.lint.per-file-ignores]
-"tests/*" = ["D"]
-
-[tool.ruff.pydocstyle]
-convention = "pep257"
+select = [
+    "E",  # pycodestyle
+    "F",  # Pyflakes
+    "UP",  # pyupgrade
+    "B",  # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "I", # isort
+    "ASYNC",
+    "C4",  # comprehensions
+    "ISC",  # implicit string concat
+    "PT",  # pytest
+    "RET",  # return
+    "PTH",  # pathlib
+    "ERA",  # remove commented code
+    "PD",  # pandas
+    "PGH",  # use specific error code for lint ignores
+    "PL",  # pylint
+    "NPY",  # numpy
+    "PERF",
+    "FURB",
+]
+ignore = [
+    "E501",  # Line too long
+    "PTH123",  # open should be replaced by Path.open
+    "ISC001",
+    "ERA001",
+    "PLR0913",
+]
 
 [tool.mypy]
 strict = true
 disallow_untyped_calls = false
 allow_redefinition = true
+no_implicit_reexport = false
+
 
 [project]
 name = "scripts"

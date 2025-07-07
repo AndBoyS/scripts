@@ -2,13 +2,12 @@
 
 import subprocess
 from pathlib import Path
-from typing import Any
 
 
 def main(
     video_dir: Path,
     video_ext: str,
-    output_dir: Path,
+    output_dir: Path | None = None,
     sub_stream: int | None = None,
     sub_dir: Path | None = None,
     sub_ext: str | None = None,
@@ -29,6 +28,8 @@ def main(
         ValueError: If neither sub_stream nor both sub_dir and sub_ext are provided,
         or if all three parameters are provided simultaneously
     """
+    if output_dir is None:
+        output_dir = video_dir
     output_dir.mkdir(exist_ok=True)
 
     sub_file_params_set = sub_dir is not None and sub_ext is not None
@@ -61,20 +62,19 @@ def main(
 
 
 if __name__ == "__main__":
-    kwargs: dict[str, Any] = dict(
-        video_dir=Path("/Users/user/Main/aboba/Active/temp"),
-        output_dir=Path("/Users/user/Main/aboba/Active/temp/Hardsubbed"),
-        video_ext=".mkv",
-        dry_run=False,
-    )
     # Use subs embedded in videos
     main(
         sub_stream=0,
-        **kwargs,
+        video_dir=Path("/Users/user/Main/aboba/Active/t"),
+        output_dir=Path("/Users/user/Main/aboba/Active/t"),
+        video_ext=".mkv",
+        dry_run=False,
     )
     # Use subs from directory
     # main(
+    #     video_dir=Path("/Users/user/Main/aboba/Active/t"),
     #     sub_dir=Path("/Users/user/Main/aboba/Archive/untitled folder"),
     #     sub_ext=".ass",
-    #     **kwargs,
+    #     video_ext=".mkv",
+    #     dry_run=False,
     # )
