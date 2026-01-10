@@ -2,56 +2,63 @@
 line-length = 120
 
 [tool.ruff.lint]
-select = [
-    "E",  # pycodestyle
-    "F",  # Pyflakes
-    "UP",  # pyupgrade
-    "B",  # flake8-bugbear
-    "SIM",  # flake8-simplify
-    "I", # isort
-    "ASYNC",
-    "C4",  # comprehensions
-    "ISC",  # implicit string concat
-    "PT",  # pytest
-    "RET",  # return
-    "PTH",  # pathlib
-    "ERA",  # remove commented code
-    "PD",  # pandas
-    "PGH",  # use specific error code for lint ignores
-    "PL",  # pylint
-    "NPY",  # numpy
-    "PERF",
-    "FURB",
-]
 ignore = [
-    "E501",  # Line too long
-    "PTH123",  # open should be replaced by Path.open
-    "ISC001",
+    "E501",    # Line too long
     "ERA001",
+    "ISC001",
     "PLR0913",
+    "PTH123",  # open should be replaced by Path.open
+]
+select = [
+    "ASYNC",
+    "B",     # flake8-bugbear
+    "C4",    # comprehensions
+    "E",     # pycodestyle
+    "ERA",   # remove commented code
+    "F",     # Pyflakes
+    "FURB",
+    "I",     # isort
+    "ISC",   # implicit string concat
+    "NPY",   # numpy
+    "PD",    # pandas
+    "PERF",
+    "PGH",   # use specific error code for lint ignores
+    "PL",    # pylint
+    "PT",    # pytest
+    "PTH",   # pathlib
+    "RET",   # return
+    "SIM",   # flake8-simplify
+    "UP",    # pyupgrade
 ]
 
 [tool.mypy]
-strict = true
-disallow_untyped_calls = false
 allow_redefinition = true
+disallow_untyped_calls = false
 no_implicit_reexport = false
-
+strict = true
 
 [project]
-name = "scripts"
-version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
-requires-python = ">=3.12"
 dependencies = [
     "basedpyright>=1.27.1",
     "mutagen>=1.47.0",
     "natsort>=8.4.0",
 ]
+description = "Add your description here"
+name = "scripts"
+readme = "README.md"
+requires-python = ">=3.12"
+version = "0.1.0"
 
 [dependency-groups]
 dev = [
     "mypy>=1.15.0",
     "ruff>=0.11.6",
 ]
+
+[build-system]
+build-backend = "uv_build"
+requires = ["uv_build~=0.8.0"]
+
+[tool.uv.build-backend]
+module-name = "src"
+module-root = ""
